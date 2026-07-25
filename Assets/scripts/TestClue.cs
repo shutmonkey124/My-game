@@ -2,10 +2,14 @@ using UnityEngine;
 
 public class TestClue : Interactable
 {
-    [TextArea]
+    [TextArea(2, 5)]
     [SerializeField]
-    private string clueText =
-        "There are fresh scratches around the lock.";
+    private string[] clueLines =
+    {
+        "There are fresh scratches around the lock.",
+        "Someone forced this door open recently.",
+        "But nothing inside appears to have been stolen..."
+    };
 
     public override void Interact()
     {
@@ -15,6 +19,6 @@ public class TestClue : Interactable
             return;
         }
 
-        DialogueUI.Instance.ShowDialogue(clueText);
+        DialogueUI.Instance.ShowDialogue(clueLines);
     }
 }

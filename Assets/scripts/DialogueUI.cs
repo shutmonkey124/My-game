@@ -8,6 +8,12 @@ public class DialogueUI : MonoBehaviour
     [SerializeField] private GameObject dialoguePanel;
     [SerializeField] private TMP_Text dialogueText;
 
+    private string[] currentLines;
+    private int currentLineIndex;
+
+    public bool IsOpen =>
+        dialoguePanel != null && dialoguePanel.activeSelf;
+
     private void Awake()
     {
         Instance = this;
@@ -15,30 +21,62 @@ public class DialogueUI : MonoBehaviour
 
     private void Start()
     {
-        dialoguePanel.SetActive(false);
+        HideDialogue();
     }
 
     private void Update()
     {
-        if (dialoguePanel != null &&
-            dialoguePanel.activeSelf &&
-            (Input.GetKeyDown(KeyCode.Space) ||
-             Input.GetKeyDown(KeyCode.Escape)))
+        if (!IsOpen)
+            return;
+
+        // Space advances to the next line.
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            ShowNextLine();
+        }
+
+        // Escape immediately closes the conversation.
+        if (Input.GetKeyDown(KeyCode.Escape))
         {
             HideDialogue();
         }
     }
 
-    public void ShowDialogue(string message)
+    public void ShowDialogue(string[] lines)
     {
         if (dialoguePanel == null || dialogueText == null)
         {
-            Debug.LogError("DialogueUI references are not connected.");
+            Debug.LogError(
+                "DialogueUI references are not connected."
+            );
             return;
         }
 
-        dialogueText.text = message;
+        if (lines == null || lines.Length == 0)
+        {
+            Debug.LogWarning("Dialogue has no lines.");
+            return;
+        }
+
+        currentLines = lines;
+        currentLineIndex = 0;
+
         dialoguePanel.SetActive(true);
+        dialogueText.text = currentLines[currentLineIndex];
+    }
+
+    private void ShowNextLine()
+    {
+        currentLineIndex++;
+
+        // Close after the final line.
+        if (currentLineIndex >= currentLines.Length)
+        {
+            HideDialogue();
+            return;
+        }
+
+        dialogueText.text = currentLines[currentLineIndex];
     }
 
     public void HideDialogue()
@@ -47,5 +85,8 @@ public class DialogueUI : MonoBehaviour
         {
             dialoguePanel.SetActive(false);
         }
+
+        currentLines = null;
+        currentLineIndex = 0;
     }
 }
