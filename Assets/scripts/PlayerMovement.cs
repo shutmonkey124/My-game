@@ -1,16 +1,27 @@
 using UnityEngine;
 
+[RequireComponent(typeof(Rigidbody2D))]
 public class PlayerMovement : MonoBehaviour
 {
     [SerializeField] private float speed = 5f;
 
-    void Update()
+    private Rigidbody2D rb;
+    private Vector2 movement;
+
+    private void Awake()
     {
-        float horizontal = Input.GetAxisRaw("Horizontal");
-        float vertical = Input.GetAxisRaw("Vertical");
+        rb = GetComponent<Rigidbody2D>();
+    }
 
-        Vector3 movement = new Vector3(horizontal, vertical, 0f).normalized;
+    private void Update()
+    {
+        movement.x = Input.GetAxisRaw("Horizontal");
+        movement.y = Input.GetAxisRaw("Vertical");
+        movement = movement.normalized;
+    }
 
-        transform.position += movement * speed * Time.deltaTime;
+    private void FixedUpdate()
+    {
+        rb.MovePosition(rb.position + movement * speed * Time.fixedDeltaTime);
     }
 }
