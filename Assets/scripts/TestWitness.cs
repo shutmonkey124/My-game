@@ -1,7 +1,12 @@
+using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class TestWitness : Interactable
 {
+    private bool askedCalmly;
+    private bool pressuredWitness;
+
     public override void Interact()
     {
         if (DialogueUI.Instance == null)
@@ -32,41 +37,43 @@ public class TestWitness : Interactable
 
     private void ShowQuestionMenu()
     {
-        string[] choices =
+        List<string> choices = new List<string>();
+        List<Action> actions = new List<Action>();
+
+        if (!askedCalmly)
         {
-            "Ask calmly",
-            "Pressure the witness",
-            "End the conversation"
-        };
+            choices.Add("Ask calmly");
+            actions.Add(AskCalmly);
+        }
+
+        if (!pressuredWitness)
+        {
+            choices.Add("Pressure the witness");
+            actions.Add(PressureWitness);
+        }
+
+        choices.Add("End the conversation");
+        actions.Add(EndConversation);
 
         DialogueUI.Instance.ShowChoices(
             "Officer",
             "How should I respond?",
-            choices,
-            HandleChoice
+            choices.ToArray(),
+            selectedIndex =>
+            {
+                if (selectedIndex >= 0 &&
+                    selectedIndex < actions.Count)
+                {
+                    actions[selectedIndex].Invoke();
+                }
+            }
         );
-    }
-
-    private void HandleChoice(int choiceIndex)
-    {
-        switch (choiceIndex)
-        {
-            case 0:
-                AskCalmly();
-                break;
-
-            case 1:
-                PressureWitness();
-                break;
-
-            case 2:
-                EndConversation();
-                break;
-        }
     }
 
     private void AskCalmly()
     {
+        askedCalmly = true;
+
         DialogueLine[] response =
         {
             new DialogueLine
@@ -89,6 +96,8 @@ public class TestWitness : Interactable
 
     private void PressureWitness()
     {
+        pressuredWitness = true;
+
         DialogueLine[] response =
         {
             new DialogueLine
