@@ -6,13 +6,29 @@ public class PlayerInteraction : MonoBehaviour
 
     private void Update()
     {
-        if (!Input.GetKeyDown(KeyCode.E))
-            return;
+        bool dialogueIsOpen =
+            DialogueUI.Instance != null &&
+            DialogueUI.Instance.IsOpen;
 
-        Collider2D[] nearbyColliders = Physics2D.OverlapCircleAll(
-            transform.position,
-            interactionRadius
-        );
+        bool notebookIsOpen =
+            NotebookUI.Instance != null &&
+            NotebookUI.Instance.IsOpen;
+
+        if (dialogueIsOpen || notebookIsOpen)
+        {
+            return;
+        }
+
+        if (!Input.GetKeyDown(KeyCode.E))
+        {
+            return;
+        }
+
+        Collider2D[] nearbyColliders =
+            Physics2D.OverlapCircleAll(
+                transform.position,
+                interactionRadius
+            );
 
         foreach (Collider2D nearbyCollider in nearbyColliders)
         {
@@ -29,6 +45,9 @@ public class PlayerInteraction : MonoBehaviour
 
     private void OnDrawGizmosSelected()
     {
-        Gizmos.DrawWireSphere(transform.position, interactionRadius);
+        Gizmos.DrawWireSphere(
+            transform.position,
+            interactionRadius
+        );
     }
 }

@@ -15,6 +15,20 @@ public class PlayerMovement : MonoBehaviour
 
     private void Update()
     {
+        bool dialogueIsOpen =
+            DialogueUI.Instance != null &&
+            DialogueUI.Instance.IsOpen;
+
+        bool notebookIsOpen =
+            NotebookUI.Instance != null &&
+            NotebookUI.Instance.IsOpen;
+
+        if (dialogueIsOpen || notebookIsOpen)
+        {
+            movement = Vector2.zero;
+            return;
+        }
+
         movement.x = Input.GetAxisRaw("Horizontal");
         movement.y = Input.GetAxisRaw("Vertical");
         movement = movement.normalized;
@@ -22,6 +36,9 @@ public class PlayerMovement : MonoBehaviour
 
     private void FixedUpdate()
     {
-        rb.MovePosition(rb.position + movement * speed * Time.fixedDeltaTime);
+        rb.MovePosition(
+            rb.position +
+            movement * speed * Time.fixedDeltaTime
+        );
     }
 }
