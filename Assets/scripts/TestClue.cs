@@ -2,13 +2,24 @@ using UnityEngine;
 
 public class TestClue : Interactable
 {
-    [TextArea(2, 5)]
     [SerializeField]
-    private string[] clueLines =
+    private DialogueLine[] dialogueLines =
     {
-        "There are fresh scratches around the lock.",
-        "Someone forced this door open recently.",
-        "But nothing inside appears to have been stolen..."
+        new DialogueLine
+        {
+            speaker = "Officer",
+            text = "There are fresh scratches around the lock."
+        },
+        new DialogueLine
+        {
+            speaker = "Officer",
+            text = "Someone forced this door open recently."
+        },
+        new DialogueLine
+        {
+            speaker = "Officer",
+            text = "But nothing inside appears to have been stolen..."
+        }
     };
 
     public override void Interact()
@@ -19,6 +30,6 @@ public class TestClue : Interactable
             return;
         }
 
-        DialogueUI.Instance.ShowDialogue(clueLines);
+        DialogueUI.Instance.ShowDialogue(dialogueLines);
     }
 }
